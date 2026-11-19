@@ -1644,7 +1644,7 @@ class NovaViewModel(application: Application) : AndroidViewModel(application) {
                 val msg = executeAutoFixKeyInternal("FIX_AUTO_FAILOVER_FREE_AI")
                 logs.add("• AI Engine: $msg")
             } else {
-                logs.add("• AI Engine (${profile?.name}): Sihat & responsif.")
+                logs.add("• AI Engine (${profile.name}): Sihat & responsif.")
             }
 
             // 2. Reset Voice recognizer & TTS engine to clear MIUI/HyperOS stuck locks

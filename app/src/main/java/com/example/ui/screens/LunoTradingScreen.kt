@@ -20,17 +20,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Launch
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.CandlestickChart
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Launch
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.TrendingDown
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -115,55 +115,61 @@ fun LunoTradingScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Header Card
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth()
+            // Clean Frameless Fintech Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CandlestickChart,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Luno Trading Desk", style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        text = "Pasaran langsung MYR & Strategi Modal Mikro",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("Luno Veteran Trading Desk", style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            text = "Data live api.luno.com • Pasangan MYR & Strategi Modal Mikro",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    OutlinedButton(onClick = onLaunchLunoApp, modifier = Modifier.testTag("open_luno_app_button")) {
-                        Icon(Icons.Default.Launch, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("Luno", maxLines = 1)
-                    }
-                    IconButton(
-                        onClick = onLoadMarket,
-                        enabled = !lunoState.isLoadingMarket,
-                        modifier = Modifier.testTag("refresh_luno_button")
+                }
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    onClick = onLaunchLunoApp,
+                    modifier = Modifier.testTag("open_luno_app_button")
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     ) {
-                        if (lunoState.isLoadingMarket) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                        } else {
-                            Icon(Icons.Default.Refresh, contentDescription = "Refresh Luno market")
-                        }
+                        Icon(
+                            Icons.AutoMirrored.Filled.Launch,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text("Luno", style = MaterialTheme.typography.labelLarge, maxLines = 1)
+                    }
+                }
+                IconButton(
+                    onClick = onLoadMarket,
+                    enabled = !lunoState.isLoadingMarket,
+                    modifier = Modifier.testTag("refresh_luno_button")
+                ) {
+                    if (lunoState.isLoadingMarket) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                    } else {
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh Luno market")
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
             Button(
                 onClick = onLaunchLunoAutopilot,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("launch_luno_autopilot_button")
@@ -266,7 +272,11 @@ fun LunoTradingScreen(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Icon(
-                                                imageVector = if (isPositive) Icons.Default.TrendingUp else Icons.Default.TrendingDown,
+                                                imageVector = if (isPositive) {
+                                                    Icons.AutoMirrored.Filled.TrendingUp
+                                                } else {
+                                                    Icons.AutoMirrored.Filled.TrendingDown
+                                                },
                                                 contentDescription = null,
                                                 modifier = Modifier.size(16.dp)
                                             )
@@ -303,12 +313,12 @@ fun LunoTradingScreen(
                                     Text(
                                         text = "EMA9: RM${LunoMarketAnalysis.formatPrice(analysis.ema9)}",
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = Color(0xFF00E5FF)
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                     Text(
                                         text = "EMA21: RM${LunoMarketAnalysis.formatPrice(analysis.ema21)}",
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = Color(0xFFFFB300)
+                                        color = MaterialTheme.colorScheme.tertiary
                                     )
                                     Text(
                                         text = "RSI(14): ${"%.1f".format(analysis.rsi14)}",
@@ -660,12 +670,11 @@ private fun QuantMetricPill(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.background,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shape = RoundedCornerShape(14.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         modifier = modifier
     ) {
-        Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 9.dp)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelSmall,
@@ -693,11 +702,11 @@ private fun LunoCandlestickCanvas(
     resistance: Double,
     modifier: Modifier = Modifier
 ) {
-    val gridColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
-    val bullColor = Color(0xFF00E676)
-    val bearColor = Color(0xFFFF5252)
-    val ema9Color = Color(0xFF00E5FF)
-    val ema21Color = Color(0xFFFFB300)
+    val gridColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+    val bullColor = MaterialTheme.colorScheme.secondary
+    val bearColor = MaterialTheme.colorScheme.error
+    val ema9Color = MaterialTheme.colorScheme.primary
+    val ema21Color = MaterialTheme.colorScheme.tertiary
 
     if (candles.isEmpty()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {

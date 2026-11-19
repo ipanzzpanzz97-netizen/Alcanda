@@ -286,6 +286,13 @@ fun NovaApp(
                                 )
                             },
                             label = { Text(item.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            colors = androidx.compose.material3.NavigationRailItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
                             modifier = Modifier.testTag("nav_${item.route}")
                         )
                     }
@@ -299,32 +306,46 @@ fun NovaApp(
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                 bottomBar = {
                     if (!useRail && showNavigation) {
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            windowInsets = WindowInsets.navigationBars
-                        ) {
-                            navItems.forEach { item ->
-                                val selected = currentRoute == item.route
-                                NavigationBarItem(
-                                    selected = selected,
-                                    onClick = {
-                                        navController.navigate(item.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
+                        androidx.compose.foundation.layout.Column {
+                            androidx.compose.material3.HorizontalDivider(
+                                thickness = 0.5.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            )
+                            NavigationBar(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                tonalElevation = 0.dp,
+                                windowInsets = WindowInsets.navigationBars
+                            ) {
+                                navItems.forEach { item ->
+                                    val selected = currentRoute == item.route
+                                    NavigationBarItem(
+                                        selected = selected,
+                                        onClick = {
+                                            navController.navigate(item.route) {
+                                                popUpTo(navController.graph.findStartDestination().id) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
                                             }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    },
-                                    icon = {
-                                        Icon(
-                                            imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                            contentDescription = item.label
-                                        )
-                                    },
-                                    label = { Text(item.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                                    modifier = Modifier.testTag("nav_${item.route}")
-                                )
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                                contentDescription = item.label
+                                            )
+                                        },
+                                        label = { Text(item.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                                        colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                        ),
+                                        modifier = Modifier.testTag("nav_${item.route}")
+                                    )
+                                }
                             }
                         }
                     }

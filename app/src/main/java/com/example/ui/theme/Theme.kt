@@ -1,5 +1,6 @@
 package com.example.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -10,67 +11,69 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 private val DarkNovaColorScheme = darkColorScheme(
-    primary = ElectricCyan,
-    onPrimary = OnCyanDark,
-    primaryContainer = CyanContainerDark,
-    onPrimaryContainer = ElectricCyan,
-    secondary = EmeraldNeon,
-    onSecondary = Color(0xFF002411),
+    primary = CobaltPrimaryDark,
+    onPrimary = OnCobaltDark,
+    primaryContainer = CobaltContainerDark,
+    onPrimaryContainer = OnCobaltContainerDark,
+    secondary = EmeraldSecondaryDark,
+    onSecondary = OnEmeraldDark,
     secondaryContainer = EmeraldContainerDark,
-    onSecondaryContainer = EmeraldNeon,
-    tertiary = AmberPulse,
-    onTertiary = Color(0xFF281A00),
+    onSecondaryContainer = OnEmeraldContainerDark,
+    tertiary = AmberTertiaryDark,
+    onTertiary = OnAmberDark,
     tertiaryContainer = AmberContainerDark,
-    onTertiaryContainer = AmberPulse,
-    background = ObsidianBg,
+    onTertiaryContainer = OnAmberContainerDark,
+    background = DarkCanvasBg,
     onBackground = TextPrimaryDark,
-    surface = ObsidianSurface,
+    surface = DarkSurface,
     onSurface = TextPrimaryDark,
-    surfaceVariant = GraphiteCard,
+    surfaceVariant = DarkSurfaceMuted,
     onSurfaceVariant = TextSecondaryDark,
-    surfaceContainerLow = ObsidianSurface,
-    surfaceContainer = GraphiteCard,
-    surfaceContainerHigh = GraphiteCardHigh,
-    outline = BorderSlate,
-    outlineVariant = BorderSlate.copy(alpha = 0.6f),
-    error = CoralError,
-    onError = Color.White,
-    errorContainer = CoralContainerDark,
-    onErrorContainer = CoralError
+    surfaceContainerLowest = DarkCanvasBg,
+    surfaceContainerLow = DarkSurface,
+    surfaceContainer = DarkSurfaceMuted,
+    surfaceContainerHigh = DarkSurfaceHigh,
+    outline = DarkOutline,
+    outlineVariant = DarkOutlineSubtle,
+    error = RoseErrorDark,
+    onError = OnRoseDark,
+    errorContainer = RoseContainerDark,
+    onErrorContainer = OnRoseContainerDark
 )
 
 private val LightNovaColorScheme = lightColorScheme(
-    primary = CyanPrimaryLight,
+    primary = CobaltPrimaryLight,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFCBEFFF),
-    onPrimaryContainer = Color(0xFF002530),
+    primaryContainer = CobaltContainerLight,
+    onPrimaryContainer = OnCobaltContainerLight,
     secondary = EmeraldSecondaryLight,
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFC8F7DF),
-    onSecondaryContainer = Color(0xFF002914),
+    secondaryContainer = EmeraldContainerLight,
+    onSecondaryContainer = OnEmeraldContainerLight,
     tertiary = AmberTertiaryLight,
     onTertiary = Color.White,
-    tertiaryContainer = Color(0xFFFFE5B8),
-    onTertiaryContainer = Color(0xFF2B1800),
-    background = LightBg,
+    tertiaryContainer = AmberContainerLight,
+    onTertiaryContainer = OnAmberContainerLight,
+    background = LightCanvasBg,
     onBackground = TextPrimaryLight,
     surface = LightSurface,
     onSurface = TextPrimaryLight,
-    surfaceVariant = LightCard,
+    surfaceVariant = LightSurfaceMuted,
     onSurfaceVariant = TextSecondaryLight,
-    surfaceContainerLow = LightSurface,
-    surfaceContainer = LightCard,
-    surfaceContainerHigh = Color(0xFFDCE7F3),
-    outline = LightBorder,
-    outlineVariant = LightBorder.copy(alpha = 0.7f),
-    error = Color(0xFFD32F2F),
+    surfaceContainerLowest = LightSurface,
+    surfaceContainerLow = LightCanvasBg,
+    surfaceContainer = LightSurface,
+    surfaceContainerHigh = LightSurfaceMuted,
+    outline = LightOutline,
+    outlineVariant = LightOutlineSubtle,
+    error = RoseErrorLight,
     onError = Color.White,
-    errorContainer = Color(0xFFFFDAD6),
-    onErrorContainer = Color(0xFF410002)
+    errorContainer = RoseContainerLight,
+    onErrorContainer = OnRoseContainerLight
 )
 
 val NovaShapes = Shapes(
-    small = RoundedCornerShape(10.dp),
+    small = RoundedCornerShape(12.dp),
     medium = RoundedCornerShape(16.dp),
     large = RoundedCornerShape(22.dp),
     extraLarge = RoundedCornerShape(28.dp)
@@ -78,7 +81,7 @@ val NovaShapes = Shapes(
 
 @Composable
 fun NovaCoreTheme(
-    darkTheme: Boolean = true,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkNovaColorScheme else LightNovaColorScheme

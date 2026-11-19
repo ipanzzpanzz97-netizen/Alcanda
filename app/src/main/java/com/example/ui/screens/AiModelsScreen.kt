@@ -143,59 +143,49 @@ fun AiModelsScreen(
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Surface(
-                    shape = MaterialTheme.shapes.large,
-                    color = MaterialTheme.colorScheme.surfaceContainer,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Hub,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(26.dp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Enjin AI & API",
+                                style = MaterialTheme.typography.headlineSmall
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Koleksi AI Percuma & API",
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                Text(
-                                    text = "ON: ${activeProfile?.name ?: "NovaCore Gemini 3.8 Flash"}",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            IconButton(
-                                onClick = onRestoreFreePresets,
-                                modifier = Modifier.testTag("restore_free_ai_button")
-                            ) {
-                                Icon(Icons.Default.Refresh, contentDescription = "Restore free AI list")
-                            }
-                            Button(
-                                onClick = {
-                                    if (showEditor) showEditor = false else openNewForm(AiProviderType.GROQ)
-                                },
-                                modifier = Modifier.testTag("add_ai_profile_button")
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(if (showEditor) "Tutup" else "Tambah")
-                            }
+                            Text(
+                                text = "Aktif: ${activeProfile?.name ?: "NovaCore Gemini 3.8 Flash"}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Tinggal tekan suis ON pada mana-mana AI yang anda mahu pakai — AI lain akan automatik OFF serta-merta. AI bertanda TANPA KEY terus berfungsi percuma!",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        IconButton(
+                            onClick = onRestoreFreePresets,
+                            modifier = Modifier.testTag("restore_free_ai_button")
+                        ) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Restore free AI list")
+                        }
+                        Button(
+                            onClick = {
+                                if (showEditor) showEditor = false else openNewForm(AiProviderType.GROQ)
+                            },
+                            shape = RoundedCornerShape(20.dp),
+                            modifier = Modifier.testTag("add_ai_profile_button")
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(if (showEditor) "Tutup" else "Tambah")
+                        }
                     }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Hidupkan satu AI yang anda mahu pakai — AI lain akan OFF secara automatik.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

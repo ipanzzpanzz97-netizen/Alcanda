@@ -92,50 +92,38 @@ fun RepairScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Header
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth()
+            // Frameless Top App Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack, modifier = Modifier.testTag("repair_back_button")) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                    Icon(
-                        imageVector = Icons.Default.Build,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(24.dp)
+                IconButton(onClick = onBack, modifier = Modifier.testTag("repair_back_button")) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("AI Doktor & Pusat Baiki", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = "Diagnostik & pemulihan automatik",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("AI Doktor & Pusat Baiki APK", style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            text = "Kesan kerosakan, tukar AI fail-safe & baiki modul automatik",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    IconButton(
-                        onClick = onRunDiagnostics,
-                        enabled = !healthCheck.isRunning,
-                        modifier = Modifier.testTag("run_diagnostics_button")
-                    ) {
-                        if (healthCheck.isRunning) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                        } else {
-                            Icon(Icons.Default.Refresh, contentDescription = "Scan health")
-                        }
+                }
+                IconButton(
+                    onClick = onRunDiagnostics,
+                    enabled = !healthCheck.isRunning,
+                    modifier = Modifier.testTag("run_diagnostics_button")
+                ) {
+                    if (healthCheck.isRunning) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                    } else {
+                        Icon(Icons.Default.Refresh, contentDescription = "Scan health")
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp),

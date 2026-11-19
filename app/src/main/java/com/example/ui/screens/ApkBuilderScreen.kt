@@ -102,36 +102,19 @@ fun ApkBuilderScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Header Card
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth()
+            // Frameless Studio Header
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             ) {
-                Row(
-                    modifier = Modifier.padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Android,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(28.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("AI Pembina APK Studio", style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            text = "Bina projek Android Compose lengkap dari cadangan anda & compile di Termux",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                Text("AI Pembina APK", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Jana projek Android Compose daripada idea anda & compile di Termux",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -346,8 +329,7 @@ fun ApkBuilderScreen(
                                 }
                                 Surface(
                                     shape = MaterialTheme.shapes.medium,
-                                    color = MaterialTheme.colorScheme.background,
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                    color = androidx.compose.ui.graphics.Color(0xFF11141B),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(260.dp)
@@ -364,7 +346,8 @@ fun ApkBuilderScreen(
                                             style = TextStyle(
                                                 fontFamily = JetBrainsMonoFontFamily,
                                                 fontSize = 11.sp,
-                                                color = MaterialTheme.colorScheme.secondary
+                                                lineHeight = 16.sp,
+                                                color = androidx.compose.ui.graphics.Color(0xFFE5E7EB)
                                             )
                                         )
                                     }

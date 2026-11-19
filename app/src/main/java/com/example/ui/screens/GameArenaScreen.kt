@@ -24,13 +24,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,29 +42,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Launch
-import androidx.compose.material.icons.filled.TouchApp
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.game.ArenaGameType
 import com.example.game.Connect4State
@@ -99,49 +98,37 @@ fun GameArenaScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Header & Game Selector
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                modifier = Modifier.fillMaxWidth()
+            // Frameless Header & Game Selector
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
             ) {
-                Column(modifier = Modifier.padding(14.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.SportsEsports,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.size(26.dp)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("NovaCore AI Arena", style = MaterialTheme.typography.titleLarge)
-                            Text(
-                                text = "Lawan AI atau biar AI bermain secara automatik",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        IconButton(onClick = onResetGame, modifier = Modifier.testTag("reset_game_button")) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Reset game")
-                        }
-                    }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Game Arena AI", style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        text = "Lawan AI atau jalankan Auto-Play & Co-Pilot Game",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                IconButton(onClick = onResetGame, modifier = Modifier.testTag("reset_game_button")) {
+                    Icon(Icons.Default.Refresh, contentDescription = "Reset game")
+                }
+            }
 
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        ArenaGameType.entries.forEach { game ->
-                            FilterChip(
-                                selected = uiState.activeGame == game,
-                                onClick = { onSelectGame(game) },
-                                label = { Text(game.title) },
-                                modifier = Modifier.testTag("game_tab_${game.name.lowercase()}")
-                            )
-                        }
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ArenaGameType.entries.forEach { game ->
+                    FilterChip(
+                        selected = uiState.activeGame == game,
+                        onClick = { onSelectGame(game) },
+                        label = { Text(game.title) },
+                        modifier = Modifier.testTag("game_tab_${game.name.lowercase()}")
+                    )
                 }
             }
 
@@ -360,7 +347,7 @@ private fun ExternalGameCopilotCard(
                                     modifier = Modifier.padding(end = 8.dp)
                                 )
                             }
-                            Icon(Icons.Default.Launch, contentDescription = "Launch game", modifier = Modifier.size(18.dp))
+                            Icon(Icons.AutoMirrored.Filled.Launch, contentDescription = "Launch game", modifier = Modifier.size(18.dp))
                         }
                     }
                 }
@@ -604,14 +591,19 @@ private fun Cyber2048Board(
                             v <= 64 -> MaterialTheme.colorScheme.secondaryContainer
                             else -> MaterialTheme.colorScheme.tertiaryContainer
                         }
+                        val tileFg = when {
+                            v <= 4 -> MaterialTheme.colorScheme.onSurface
+                            v <= 16 -> MaterialTheme.colorScheme.onPrimaryContainer
+                            v <= 64 -> MaterialTheme.colorScheme.onSecondaryContainer
+                            else -> MaterialTheme.colorScheme.onTertiaryContainer
+                        }
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
                                 .weight(1f)
                                 .aspectRatio(1f)
-                                .clip(RoundedCornerShape(10.dp))
+                                .clip(RoundedCornerShape(12.dp))
                                 .background(tileBg)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(10.dp))
                         ) {
                             if (v != 0) {
                                 Text(
@@ -619,7 +611,7 @@ private fun Cyber2048Board(
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
-                                    color = if (v >= 16) Color.White else MaterialTheme.colorScheme.onSurface
+                                    color = tileFg
                                 )
                             }
                         }

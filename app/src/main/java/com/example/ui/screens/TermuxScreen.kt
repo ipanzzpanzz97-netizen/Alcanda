@@ -19,12 +19,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Launch
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.AssistChip
@@ -99,94 +99,88 @@ fun TermuxScreen(
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Status & Termux Connection Header
-                Surface(
-                    shape = MaterialTheme.shapes.large,
-                    color = MaterialTheme.colorScheme.surfaceContainer,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    modifier = Modifier.fillMaxWidth()
+                // Frameless Modern Header + Collapsible Setup Guide
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Terminal,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Termux AI Studio",
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                Text(
-                                    text = if (uiState.termuxInstalled) {
-                                        "Termux dikesan (com.termux sedia)"
-                                    } else {
-                                        "Termux belum dipasang — mod editor & eksport aktif"
-                                    },
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = if (uiState.termuxInstalled) {
-                                        MaterialTheme.colorScheme.secondary
-                                    } else {
-                                        MaterialTheme.colorScheme.tertiary
-                                    }
-                                )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Termux AI Studio",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Text(
+                            text = if (uiState.termuxInstalled) {
+                                "Termux dikesan • RUN_COMMAND sedia"
+                            } else {
+                                "Mod editor & eksport skrip .sh aktif"
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (uiState.termuxInstalled) {
+                                MaterialTheme.colorScheme.secondary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
                             }
-                            OutlinedButton(
-                                onClick = { showSetupGuide = !showSetupGuide },
-                                modifier = Modifier.testTag("termux_setup_guide_button")
-                            ) {
-                                Text(if (showSetupGuide) "Tutup" else "Panduan")
-                            }
-                        }
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = { showSetupGuide = !showSetupGuide },
+                        modifier = Modifier.testTag("termux_setup_guide_button")
+                    ) {
+                        Text(if (showSetupGuide) "Tutup" else "Panduan")
+                    }
+                }
 
-                        AnimatedVisibility(visible = showSetupGuide) {
-                            Column(modifier = Modifier.padding(top = 10.dp)) {
+                AnimatedVisibility(visible = showSetupGuide) {
+                    Surface(
+                        shape = MaterialTheme.shapes.large,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Text(
+                                text = "Untuk membenarkan NovaCore menghantar arahan terus ke Termux, jalankan arahan ini sekali sahaja di dalam Termux anda:",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Surface(
+                                shape = MaterialTheme.shapes.small,
+                                color = androidx.compose.ui.graphics.Color(0xFF11141B)
+                            ) {
                                 Text(
-                                    text = "Untuk membenarkan NovaCore menghantar arahan terus ke Termux, jalankan arahan ini sekali sahaja di dalam Termux anda:",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    text = TermuxBridge.TERMUX_ALLOW_EXTERNAL_CMD,
+                                    style = TextStyle(
+                                        fontFamily = JetBrainsMonoFontFamily,
+                                        fontSize = 11.sp,
+                                        color = androidx.compose.ui.graphics.Color(0xFF34D399)
+                                    ),
+                                    modifier = Modifier.padding(10.dp)
                                 )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+                            OutlinedButton(
+                                onClick = onCopySetupCommand,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Salin Arahan Setup Termux")
+                            }
+                            if (uiState.termuxInstalled && !uiState.termuxPermissionGranted) {
                                 Spacer(modifier = Modifier.height(6.dp))
-                                Surface(
-                                    shape = MaterialTheme.shapes.small,
-                                    color = MaterialTheme.colorScheme.background,
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                                Button(
+                                    onClick = onRequestTermuxPermission,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("request_termux_permission_button")
                                 ) {
-                                    Text(
-                                        text = TermuxBridge.TERMUX_ALLOW_EXTERNAL_CMD,
-                                        style = TextStyle(
-                                            fontFamily = JetBrainsMonoFontFamily,
-                                            fontSize = 11.sp,
-                                            color = MaterialTheme.colorScheme.secondary
-                                        ),
-                                        modifier = Modifier.padding(10.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(6.dp))
-                                OutlinedButton(
-                                    onClick = onCopySetupCommand,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Salin Arahan Setup Termux")
-                                }
-                                if (uiState.termuxInstalled && !uiState.termuxPermissionGranted) {
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    Button(
-                                        onClick = onRequestTermuxPermission,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .testTag("request_termux_permission_button")
-                                    ) {
-                                        Text("Minta Izin RUN_COMMAND Termux")
-                                    }
+                                    Text("Minta Izin RUN_COMMAND Termux")
                                 }
                             }
                         }
@@ -284,8 +278,8 @@ fun TermuxScreen(
             ) {
                 Surface(
                     shape = MaterialTheme.shapes.large,
-                    color = MaterialTheme.colorScheme.background,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.45f)),
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
@@ -308,7 +302,7 @@ fun TermuxScreen(
                                 fontFamily = JetBrainsMonoFontFamily,
                                 fontSize = 12.sp,
                                 lineHeight = 18.sp,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.onSurface
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -356,7 +350,7 @@ fun TermuxScreen(
                                 onClick = onOpenTermux,
                                 modifier = Modifier.testTag("open_termux_app_button")
                             ) {
-                                Icon(Icons.Default.Launch, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Icon(Icons.AutoMirrored.Filled.Launch, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text("Buka")
                             }
