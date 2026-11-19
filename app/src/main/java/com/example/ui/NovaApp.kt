@@ -247,9 +247,9 @@ fun NovaApp(
     val navItems = remember {
         listOf(
             NavDestinationItem(ROUTE_COMMAND, "Suara", Icons.Filled.Mic, Icons.Outlined.Mic),
-            NavDestinationItem(ROUTE_BUILDER, "Bina APK", Icons.Filled.Android, Icons.Outlined.Android),
+            NavDestinationItem(ROUTE_BUILDER, "Bina", Icons.Filled.Android, Icons.Outlined.Android),
             NavDestinationItem(ROUTE_LUNO, "Luno", Icons.Filled.CandlestickChart, Icons.Outlined.CandlestickChart),
-            NavDestinationItem(ROUTE_AUTOPILOT, "Autopilot", Icons.Filled.AutoMode, Icons.Outlined.AutoMode),
+            NavDestinationItem(ROUTE_AUTOPILOT, "Auto", Icons.Filled.AutoMode, Icons.Outlined.AutoMode),
             NavDestinationItem(ROUTE_DEVICE, "Peranti", Icons.Filled.Devices, Icons.Outlined.Devices)
         )
     }
@@ -335,7 +335,15 @@ fun NovaApp(
                                                 contentDescription = item.label
                                             )
                                         },
-                                        label = { Text(item.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                                        label = {
+                                            Text(
+                                                text = item.label,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                maxLines = 1,
+                                                softWrap = false,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        },
                                         colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
                                             selectedIconColor = MaterialTheme.colorScheme.primary,
                                             selectedTextColor = MaterialTheme.colorScheme.primary,
@@ -421,6 +429,7 @@ fun NovaApp(
                             onSelectProject = viewModel::selectGeneratedProject,
                             onDeleteProject = viewModel::deleteGeneratedProject,
                             onCompileInTermux = viewModel::compileGeneratedProjectInTermux,
+                            onSetupTermuxExternal = viewModel::copySetupAndOpenTermux,
                             onCopyBuildScript = viewModel::copyGeneratedBuildScript,
                             onExportBuildSh = { project ->
                                 pendingExportProject = project

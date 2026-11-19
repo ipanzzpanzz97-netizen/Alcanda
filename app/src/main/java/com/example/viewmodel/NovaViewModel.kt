@@ -1988,9 +1988,22 @@ class NovaViewModel(application: Application) : AndroidViewModel(application) {
         if (!dispatch.dispatchedViaService) {
             val fixKey = if (dispatch.needsPermission) "FIX_TERMUX_PERMISSION" else "FIX_TERMUX_SETUP"
             logSystemError("TERMUX", dispatch.message, fixKey)
+            viewModelScope.launch {
+                _events.emit(UiOneShotEvent.ToastMessage(dispatch.message))
+            }
         }
+    }
+
+    fun copySetupAndOpenTermux() {
+        termuxBridge.copyToClipboard("Termux Setup", TermuxBridge.TERMUX_ALLOW_EXTERNAL_CMD)
+        val opened = termuxBridge.openTermuxApp()
         viewModelScope.launch {
-            _events.emit(UiOneShotEvent.ToastMessage(dispatch.message))
+            val msg = if (opened) {
+                "Arahan setup disalin! Tampal (Paste) & Enter dalam Termux sekali sahaja."
+            } else {
+                "Arahan setup disalin ke papan klip. Buka Termux & tampal arahan tersebut."
+            }
+            _events.emit(UiOneShotEvent.ToastMessage(msg))
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,13 +21,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -69,6 +70,7 @@ fun ApkBuilderScreen(
     onSelectProject: (Long) -> Unit,
     onDeleteProject: (GeneratedAppProjectEntity) -> Unit,
     onCompileInTermux: (GeneratedAppProjectEntity) -> Unit,
+    onSetupTermuxExternal: () -> Unit = {},
     onCopyBuildScript: (GeneratedAppProjectEntity) -> Unit,
     onExportBuildSh: (GeneratedAppProjectEntity) -> Unit,
     modifier: Modifier = Modifier
@@ -232,21 +234,31 @@ fun ApkBuilderScreen(
                                     Icon(Icons.Default.Build, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Column(modifier = Modifier.weight(1f)) {
-                                        Text(selectedProject.appName, style = MaterialTheme.typography.titleLarge)
+                                        Text(
+                                            text = selectedProject.appName,
+                                            style = MaterialTheme.typography.titleLarge,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
                                         Text(
                                             text = selectedProject.packageId,
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.primary
+                                            color = MaterialTheme.colorScheme.primary,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Surface(
-                                        shape = RoundedCornerShape(6.dp),
+                                        shape = RoundedCornerShape(8.dp),
                                         color = if (termuxInstalled) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
                                     ) {
                                         Text(
-                                            text = if (termuxInstalled) "TERMUX READY" else "EXPORTABLE",
+                                            text = if (termuxInstalled) "TERMUX" else "EKSPORT",
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
+                                            maxLines = 1,
+                                            softWrap = false,
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                         )
                                     }
@@ -264,6 +276,7 @@ fun ApkBuilderScreen(
                                 // Action Buttons: Compile in Termux / Copy / Export .sh
                                 Button(
                                     onClick = { onCompileInTermux(selectedProject) },
+                                    shape = RoundedCornerShape(14.dp),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -271,7 +284,7 @@ fun ApkBuilderScreen(
                                 ) {
                                     Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Compile APK di Termux (gradle assembleDebug)")
+                                    Text("Compile APK di Termux", maxLines = 1, softWrap = false)
                                 }
 
                                 Spacer(modifier = Modifier.height(6.dp))
@@ -281,23 +294,55 @@ fun ApkBuilderScreen(
                                 ) {
                                     OutlinedButton(
                                         onClick = { onCopyBuildScript(selectedProject) },
+                                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
                                         modifier = Modifier
                                             .weight(1f)
                                             .testTag("copy_build_script_button")
                                     ) {
                                         Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Salin Skrip", maxLines = 1)
+                                        Text("Salin Skrip", maxLines = 1, softWrap = false)
                                     }
                                     OutlinedButton(
                                         onClick = { onExportBuildSh(selectedProject) },
+                                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
                                         modifier = Modifier
                                             .weight(1f)
                                             .testTag("export_build_sh_button")
                                     ) {
                                         Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Eksport .sh", maxLines = 1)
+                                        Text("Eksport .sh", maxLines = 1, softWrap = false)
+                                    }
+                                }
+
+                                if (termuxInstalled) {
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        onClick = onSetupTermuxExternal,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .testTag("setup_termux_external_button")
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Terminal,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(
+                                                text = "Ralat Termux 'allow-external-apps'? Ketuk sini untuk salin & buka Termux",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
                                     }
                                 }
 

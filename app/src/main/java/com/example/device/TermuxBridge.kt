@@ -114,7 +114,7 @@ class TermuxBridge(private val context: Context) {
                 dispatchedViaService = true,
                 termuxInstalled = true,
                 needsPermission = false,
-                message = "Arahan dihantar terus ke Termux! (Skrip juga disalin ke papan klip sebagai sandaran)."
+                message = "Arahan dihantar ke Termux & disalin ke papan klip. Jika Termux papar 'allow-external-apps', ketuk 'Setup Izin Termux' di bawah."
             )
         } catch (e: SecurityException) {
             openTermuxApp()
