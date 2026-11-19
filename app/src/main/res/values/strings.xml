@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NovaCore</string>
+    <string name="shortcut_voice_short">Voice AI</string>
+    <string name="shortcut_voice_long">Talk to NovaCore AI</string>
+    <string name="nav_command">Command</string>
+    <string name="nav_termux">Termux</string>
+    <string name="nav_device">Device</string>
+    <string name="nav_arena">Games</string>
+    <string name="accessibility_service_description">Membolehkan NovaCore AI melaksanakan arahan suara di luar aplikasi seperti mengunci skrin, membuka menu kuasa, mengetuk butang, menatal skrin, dan kawalan sistem.</string>
+</resources>

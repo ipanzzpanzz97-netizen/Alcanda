@@ -1,0 +1,97 @@
+name: Build & Verify NovaCore Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Test, Build & Sign APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Gradle 9.3.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.3.1'
+
+      - name: Accept Android SDK Licenses
+        run: |
+          if [ -n "${ANDROID_HOME:-}" ] && [ -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          fi
+
+      - name: Prepare Signing Keystore & Secrets Fallback
+        run: |
+          if [ -f debug.keystore.base64 ] && [ ! -f debug.keystore ]; then
+            base64 -d debug.keystore.base64 > debug.keystore
+            echo "Decoded debug.keystore from debug.keystore.base64"
+          elif [ ! -f debug.keystore ]; then
+            keytool -genkey -v -keystore debug.keystore \
+              -storepass android -alias androiddebugkey -keypass android \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+            echo "Generated fallback debug.keystore"
+          fi
+          if [ ! -f .env ] && [ -f .env.example ]; then
+            cp .env.example .env
+            echo "Created .env from .env.example"
+          fi
+
+      - name: Run Unit & Robolectric Tests
+        run: gradle :app:testDebugUnitTest --no-daemon
+
+      - name: Build Installable Signed APK
+        run: gradle :app:assembleDebug --no-daemon
+
+      - name: Verify APK Existence & v2/v3 Signature
+        run: |
+          APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
+          if [ ! -f "$APK_PATH" ]; then
+            echo "ERROR: APK tidak ditemui di $APK_PATH"
+            exit 1
+          fi
+          cp "$APK_PATH" "app/build/outputs/apk/debug/NovaCore-debug.apk"
+          APKSIGNER_BIN="$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools" -maxdepth 2 -name apksigner 2>/dev/null | sort -V | tail -n 1 || true)"
+          if [ -n "$APKSIGNER_BIN" ] && [ -x "$APKSIGNER_BIN" ]; then
+            "$APKSIGNER_BIN" verify --verbose "$APK_PATH"
+          else
+            echo "apksigner tidak ditemui, menyemak integriti arkib ZIP APK..."
+            unzip -tq "$APK_PATH"
+          fi
+          ls -lh "$APK_PATH" "app/build/outputs/apk/debug/NovaCore-debug.apk"
+          sha256sum "$APK_PATH"
+
+      - name: Upload NovaCore APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NovaCore-APK-Debug
+          path: |
+            app/build/outputs/apk/debug/NovaCore-debug.apk
+            app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Publish Build Summary
+        if: always()
+        run: |
+          echo "### NovaCore Android APK Build" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            SIZE=$(du -h "app/build/outputs/apk/debug/app-debug.apk" | cut -f1)
+            echo "- Status: **BERJAYA DIBINA & DISAHKAN**" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Saiz APK: \`$SIZE\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Muat turun artifak \`NovaCore-APK-Debug\` dan pasang \`NovaCore-debug.apk\` pada peranti Poco X7 Pro." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- Status: **GAGAL** — semak log Gradle di atas." >> "$GITHUB_STEP_SUMMARY"
+          fi

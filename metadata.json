@@ -1,0 +1,6 @@
+{
+  "name": "NovaCore",
+  "description": "Voice-controlled AI device assistant with direct file, camera, hardware telemetry, Termux script automation, and interactive AI gaming.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
